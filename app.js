@@ -12,7 +12,7 @@ const express = require("express"),
 seedDB();
 
 //mi connetto al database
-mongoose.connect("mongodb://localhost:27017f/yelp_camp", {useNewUrlParser: true});
+mongoose.connect("mongodb://localhost:27017f/yelp_camp_v3", {useNewUrlParser: true});
 //utilizzo view engine per aggiungere ejs extensions
 app.set("view engine", "ejs");
 //setto l`utilizzo del bodyparser pacchetto che permette di la request.body in un oggetto js
@@ -72,13 +72,14 @@ app.get("/", (req, res) => {
 
 	app.post("/campgrounds", (req, res) => {
   		var name = req.body.name;
-  		var image = req.body.image;
+   		var image = req.body.image;
 		var description = req.body.description;
 		var newCampground = {name: name, image: image, description: description};
 				Campground.create(newCampground, (err, added) => {
 					if(err) {
 						console.log(err)
 					} else {
+						
 						res.redirect("/campgrounds");	//2
 					}
 			});
