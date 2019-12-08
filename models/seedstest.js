@@ -1,7 +1,8 @@
-var mongoose = require("mongoose");
-var Campground = require("./models/campground");
-var Comment   = require("./models/comment");
+var mongoose = require("mongoose"); //1 richiedo mongoose 
+var Campground = require("./models/campground"); // richiedo il modello di campground
+var Comment   = require("./models/comment"); //richiedo il modello del commento
  
+//dati sample per popolare il database con alcuni record all`avvio
 var data = [
     {
         name: "Cloud's Rest", 
@@ -20,9 +21,19 @@ var data = [
     }
 ]
  
+
+
+//genero una funzione seed che verra` esportata e poi eseguita immediatamente all`avvio del programma
+//le funzioni sono inserite in una callback in modo che il codice venga generato nell`ordine corretto
+ //1 Remove all campgrounds 
+//2 in una collback della rimozione dei campground  rimuovo tutti i commenti
+//3 aggiungo  a few campgrounds basati sui dati che ho salvato in data per questo scopo
+//4 aggiungo un commento per i campground che ho creato
+//5 push nel campground che ho cretato il commento che ho appena creato
+//6 salvo il campground comprensivo di commento
 function seedDB(){
-   //Remove all campgrounds
-   Campground.remove({}, function(err){
+  
+   Campground.remove({}, function(err){ //1
         if(err){
             console.log(err);
         }
@@ -31,16 +42,16 @@ function seedDB(){
             if(err){
                 console.log(err);
             }
-            console.log("removed comments!");
-             //add a few campgrounds
-            data.forEach(function(seed){
+            console.log("removed comments!"); //2
+             
+            data.forEach(function(seed){ //3
                 Campground.create(seed, function(err, campground){
                     if(err){
                         console.log(err)
                     } else {
                         console.log("added a campground");
-                        //create a comment
-                        Comment.create(
+                       
+                        Comment.create(    //4
                             {
                                 text: "This place is great, but I wish there was internet",
                                 author: "Homer"
@@ -48,8 +59,8 @@ function seedDB(){
                                 if(err){
                                     console.log(err);
                                 } else {
-                                    campground.comments.push(comment);
-                                    campground.save();
+                                    campground.comments.push(comment); //5
+                                    campground.save(); //6
                                     console.log("Created new comment");
                                 }
                             });
@@ -61,4 +72,5 @@ function seedDB(){
     //add a few comments
 }
  
+//esporto la funzione seedDB
 module.exports = seedDB;

@@ -6,6 +6,7 @@ const express = require("express"),
 	  bodyParser = require("body-parser"), //faccio il require del bodyparser serve a rendere il body un oggetto javascript
 	  mongoose = require("mongoose"), //mongoose to add js to databases
 	  Campground = require("./models/campground"), //sto importando mongoose.model("Campgroud", campgroundSchema);
+	  Comment = require("./models/comment"), //sto importando mongoose.model("Comment", commentSchema);
 	  seedDB = 	require("./seeds");	
 
 
@@ -15,6 +16,9 @@ seedDB();
 mongoose.connect("mongodb://localhost:27017f/yelp_camp_v3", {useNewUrlParser: true});
 //utilizzo view engine per aggiungere ejs extensions
 app.set("view engine", "ejs");
+//utilizzo il file statico css  //dirname e la directory nella quale vive il file
+//senza di questo anche se ho richiesto un file nel file header non sa dove andare a prenderlo.
+app.use(express.static(__dirname + "/public"));  
 //setto l`utilizzo del bodyparser pacchetto che permette di la request.body in un oggetto js
 app.use(bodyParser.urlencoded({ extended: true })); 
 
@@ -58,7 +62,7 @@ app.get("/", (req, res) => {
 			if(err){
 				console.log(err);
 			} else {
-				//console.log(allCampgrounds);
+				
 				res.render("campgrounds/index", { campgrounds: allCampgrounds}); //3
 			}
 		});
@@ -94,30 +98,33 @@ app.get("/campgrounds/new", (req, res) => {
 
 //SHOW -  RESTFUL ROUTING STRUCTURE mostra le info a proposito di uno specifico item 
 //1 trovare il campground con l`id fornito
+//siccome i commenti sono riferiti tramite gli id devo popolare il campeggio trovato con gli effettivi commenti in modo da poterli renderizzare sulla pagina 
 //2 render la pagina show con il campground richiesto
 app.get("/campgrounds/:id", (req, res) => {
-	Campground.findById(req.params.id, (err, foundCampground)=> { //1
+	
+	Campground.findById(req.params.id).populate("comments").exec((err, foundCampground)=> { //1
 		if(err) {
 			console.log(err);
 		} else {
+			
 		    res.render("campgrounds/show", {campground: foundCampground}); //2
+			
 		}
 	});
 	
 }); 
-
+ 
 
 //////////////////////////////////////////////////////////////////////////////////////////
 //ROUTES PER I COMMENTI
 //////////////////////////////////////////////////////////////////////////////////////////
-
 //NEW--RESTFUL ROUTING STRUCTURE serve a mostrare il form attraverso il quale possiamo creare un nuovo commento
-//1-quando avviene una http request 
+//1-quando avviene una http request a /campgrounds/:id/comments/new"
 //2- faccio il render di un file new.ejs
 //3 trovo i camground by id dallo url
 //4 il campground ottenuto lo invio come variabile al template che renderizzo
 app.get("/campgrounds/:id/comments/new", (req, res) => { //1
-	Campground.findById(req.params.id, (err, campground)=> {
+	Campground.findById(req.params.id, (err, campground) => {
 		if(err) {
 			console.log(err);
 		} else {
@@ -128,6 +135,37 @@ app.get("/campgrounds/:id/comments/new", (req, res) => { //1
 	
 }); 
 
+
+
+//CREATE -  RESTFUL ROUTING STRUCTURE e` il form per aggiungere un item
+//CREATE e lo step di aggiunta al database 
+//1 lookup campground using ID
+//2 se errore rindirizzo alla pagina campground
+//3 se non e` errore creo un commento con i parametri passati dal form che si trovano nell`oggetto comment perche comment[text]
+//4 pusho il commento nel campground che ho trovato
+//5 rendirizzo alla pagina del campgrounde relativo
+app.post("/campgrounds/:id/comments", (req, res) => {
+	
+	Campground.findById(req.params.id, (err, campground) => { //1
+	 	if(err) {
+			console.log(err);
+			res.redirect("/campgrounds"); //2
+		} else {
+			Comment.create(req.body.comment, (err, comment) => { //3
+				if(err){
+				   console.log(err);
+				} else {
+					
+					campground.comments.push(comment); //4
+					campground.save();
+						
+					res.redirect(`/campgrounds/${campground._id}`); //5
+				}
+		 
+		 });
+		}
+	});
+});
 
 
 

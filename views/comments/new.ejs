@@ -1,12 +1,12 @@
 <!--1 il valore di un imput in una post request e` sempre contenuto nel campo che viene da name  -->
 <!--2 display dinamico del titolo del campground  -->
-
+<!--3  faccio una get request a campground con l`id in modo da mostrare il campground relativo sul submit--> 
 <% include ../partials/header %>
 <div class="container">
   <div class="row">
       <h1 style="text-align: center;">Add New Comment to <%= campground.name %></h1>  <!--2  -->  
       <div style="width: 30%; margin: 25px auto;">
-        <form action="/campgrounds/<%= campground._id %>" method="POST">
+        <form action="/campgrounds/<%= campground._id %>/comments" method="POST">
           <div class="form-group">
               <input class="form-control" type="text" name="comment[text]" placeholder="text"> <!--1  -->
           </div>

@@ -8,17 +8,17 @@ const data = [
 		{
 			name: "Campgroud 1",
 			image: "https://www.nps.gov/mora/planyourvisit/images/OhanaCampground2016_CMeleedy_01_web.jpeg?maxwidth=1200&maxheight=1200&autorotate=false",
-			description: "puffi"
+			description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu magna dui. Pellentesque tempor placerat justo eget condimentum. Suspendisse mauris nisl, elementum sed velit et, venenatis pellentesque urna. Nam facilisis vel dolor vitae suscipit. Donec varius nibh vitae suscipit venenatis. Pellentesque metus tortor, feugiat ut tincidunt vel, venenatis ac odio. Ut suscipit, felis sed varius ultricies, eros ante ullamcorper mauris, non dignissim purus nunc malesuada diam. Morbi ut mi nec quam volutpat dignissim. Integer blandit libero nec metus finibus fermentum. Mauris elementum faucibus mi, eget porttitor nulla."
 		},
 		{
 			name: "Campgroud 2",
 			image: "https://newhampshirestateparks.reserveamerica.com/webphotos/NH/pid270015/0/540x360.jpg",
-			description: "puffi puffi"
+			description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu magna dui. Pellentesque tempor placerat justo eget condimentum. Suspendisse mauris nisl, elementum sed velit et, venenatis pellentesque urna. Nam facilisis vel dolor vitae suscipit. Donec varius nibh vitae suscipit venenatis. Pellentesque metus tortor, feugiat ut tincidunt vel, venenatis ac odio. Ut suscipit, felis sed varius ultricies, eros ante ullamcorper mauris, non dignissim purus nunc malesuada diam. Morbi ut mi nec quam volutpat dignissim. Integer blandit libero nec metus finibus fermentum. Mauris elementum faucibus mi, eget porttitor nulla."
 		},
 		{
 			name: "Campgroud 3",
 			image: "https://cdn.jacksonholewy.net/images/content/14405_832ba2_gros_ventre_campground_lg.jpg",
-			description: "puffi puffi puffi"
+			description: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed eu magna dui. Pellentesque tempor placerat justo eget condimentum. Suspendisse mauris nisl, elementum sed velit et, venenatis pellentesque urna. Nam facilisis vel dolor vitae suscipit. Donec varius nibh vitae suscipit venenatis. Pellentesque metus tortor, feugiat ut tincidunt vel, venenatis ac odio. Ut suscipit, felis sed varius ultricies, eros ante ullamcorper mauris, non dignissim purus nunc malesuada diam. Morbi ut mi nec quam volutpat dignissim. Integer blandit libero nec metus finibus fermentum. Mauris elementum faucibus mi, eget porttitor nulla."
 		}
 	];
 

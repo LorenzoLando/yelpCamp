@@ -2,14 +2,15 @@
 const mongoose = require("mongoose"); //mongoose to add js to databases
 
 
-//schema setup 
+//schema setup
+//1 riferimento all`id del commento con l`id del commento che voglio attribuire al record.
 const campgroundSchema = new mongoose.Schema({
 	name:String,
 	image:String,
 	description: String,
 	comments: [
       {
-         type: mongoose.Schema.Types.ObjectId,
+         type: mongoose.Schema.Types.ObjectId, //1
          ref: "Comment"
       }
    ]

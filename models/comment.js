@@ -5,7 +5,7 @@ const mongoose = require("mongoose"); //mongoose to add js to databases
 //schema setup 
 const commentSchema = new mongoose.Schema({
 	text:String,
-	author:String,
+	author:String
 	
 });
 
