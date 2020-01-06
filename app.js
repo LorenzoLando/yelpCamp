@@ -85,9 +85,9 @@ app.get("/", (req, res) => {
 					if(err) {
 						console.log(err)
 					} else {
+						res.redirect("campgrounds");	//2
 						
-						res.redirect("campgrounds/campgrounds");	//2
-					}
+				}
 			});
 	});
 
