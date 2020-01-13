@@ -5,12 +5,14 @@ const express = require("express"),
 	  viewEngine = require("view-engine"), //per eliminare ejs estensioni
 	  bodyParser = require("body-parser"), //faccio il require del bodyparser serve a rendere il body un oggetto javascript
 	  mongoose = require("mongoose"), //mongoose to add js to databases
+	  passport = require("passport"), //richiedo passport
+	  LocalStrategy = require("passport-local"), //richiedo la strategia di autenticazione
 	  Campground = require("./models/campground"), //sto importando mongoose.model("Campgroud", campgroundSchema);
 	  Comment = require("./models/comment"), //sto importando mongoose.model("Comment", commentSchema);
+	  User = require("./models/user"), //importo lo usershcema per il database
 	  seedDB = 	require("./seeds");	
 
 
-seedDB();
 
 //mi connetto al database
 mongoose.connect("mongodb://localhost:27017f/yelp_camp_v3", {useNewUrlParser: true});
@@ -22,27 +24,33 @@ app.use(express.static(__dirname + "/public"));
 //setto l`utilizzo del bodyparser pacchetto che permette di la request.body in un oggetto js
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-//inizializzo il database creando un primo record
-//create accetta due argomenti un oggetto che passa i dati e una funzione per l`error handling
-// Campground.create(
-// 	{
-// 		name: "Lorenzo First",
-// 		image: "https://images.unsplash.com/photo-1565775501514-4db91a79ee67?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=800&q=80",
-// 		description: "This is the street life campground"
-// 	}, 
-	
-// 	(err, campground) => {
-		
-// 		if(err) {
-// 			console.log(err);
-// 		} else {
-// 			console.log("NEWLY CREATED CAMPGROUND: ");
-// 			console.log(campground);
-// 		}
-	
-// });
+seedDB();
 
 
+//PASSPORT CONFIGURATION
+//1 secret is used for securyty reasons to set the cookie
+app.use(require("express-session")({
+	secret: "Once again this is the deconding phase", //1
+	resave: false,
+	saveUninitialized: false
+}));
+
+//2 settaggio del metodo di autenticazione che utilizzero` in seguito  = *
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy(User.authenticate()));
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+//configuro il middleware in modo che req.user venga passato a tutte le routes mi serve in tutto gli head
+//1 lo passo alla res in modo che la variabile sia disponibile sempre
+//2 nex() fa passare alle linee di codice successive
+app.use(function(req, res, next) {
+	res.locals.currentUser = req.user;
+	next();
+});
+
+//end of passport configuration
 
 //quando la richiesta viene fatta a "/"
 //faccio il rendering della landig page
@@ -62,7 +70,6 @@ app.get("/", (req, res) => {
 			if(err){
 				console.log(err);
 			} else {
-				
 				res.render("campgrounds/index", { campgrounds: allCampgrounds}); //3
 			}
 		});
@@ -123,12 +130,14 @@ app.get("/campgrounds/:id", (req, res) => {
 //2- faccio il render di un file new.ejs
 //3 trovo i camground by id dallo url
 //4 il campground ottenuto lo invio come variabile al template che renderizzo
-app.get("/campgrounds/:id/comments/new", (req, res) => { //1
+//5 isLoggedIn controlla se sei autenticato
+	//se lo sei ti indirizza al form di aggiunta commenti
+	//se non lo fai ti re-indizzia a login -nella definizione si isloggedin -
+app.get("/campgrounds/:id/comments/new",isLoggedIn, (req, res) => { //1
 	Campground.findById(req.params.id, (err, campground) => {
 		if(err) {
 			console.log(err);
 		} else {
-			
 			res.render("comments/new", {campground: campground}); //4
 		}
 	})
@@ -158,7 +167,6 @@ app.post("/campgrounds/:id/comments", (req, res) => {
 					
 					campground.comments.push(comment); //4
 					campground.save();
-						
 					res.redirect(`/campgrounds/${campground._id}`); //5
 				}
 		 
@@ -169,7 +177,89 @@ app.post("/campgrounds/:id/comments", (req, res) => {
 
 
 
+//=======================
+// AUTH ROUTES
+//questa e` la sezione che gestisce le routes di autenticazione dell`utente
+//====================
 
+//mostra pagina per la registrazione
+app.get("/register", (req, res) => {
+	res.render("register");
+});
+
+//logica del sign in form
+//1 creo un nuovo user inserendo nel database lo username inserito nel form
+//2 creo una registrazione salvando nel database una password che viene criptata
+//3 in caso di errore renderizzo la pagina di registrazione
+//4 ti loggo e ti riporto su campground
+app.post("/register", (req, res) => {
+	var newUser = new User({username: req.body.username}); //1
+	User.register(newUser, req.body.password, (err, user) => { //2
+		if(err) {
+			console.log(err);
+			return res.render("register");
+		}
+		passport.authenticate("local")(req, res, () => {
+			res.redirect("/campgrounds"); //4
+		});
+	});
+});
+
+
+
+//=======================
+// LOGIN ROUTES
+//questa e` la sezione che gestisce le routes il login dell`utente
+//====================
+
+//mostra pagina per il login
+app.get("/login", (req, res) => {
+	res.render("login");
+});
+
+
+
+//logica del sign in form
+//1 l`autenticazione si fa tramite middleware il metodo autenticate deriva  da * 
+//per middleware si intende una funzionalita` che si esegue prima della callback
+//e la stessa funzione autenticate che si carica in register route
+app.post("/login", passport.authenticate("local", // *
+										 
+			{
+				successRedirect: "/campgrounds",
+				failureRedirect: "/login"
+			
+	}), (req, res) => {
+	 
+});
+
+
+//=======================
+//LOGOUT ROUTES
+//questa e` la sezione che gestisce le routes il logout dell`utente
+//====================
+
+
+//gestisci la richiesta di logout
+//1 .logout() e` una funzionalita` costruita dentro il pacchetto passport
+//2 re-indirizzo su campground
+app.get("/logout", (req, res) => {
+	req.logout(); //1
+	res.redirect("/campgrounds"); //2
+});
+
+
+//definisco il middlware per quanto riguarda l`autenticazione
+//la funzione verra` utilizzata come middleware 
+//1 se sei autenticato con una funzionalita` offerta da passport
+//2 eseguo la funzione successiva grazie a next()
+//3 if non autenticato reindirizzo su /login
+function isLoggedIn (req, res, next) {
+	if(req.isAuthenticated()) { //1
+	   		return next(); //2
+	 }
+	 res.redirect("/login"); //3
+}
 
 
 
