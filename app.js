@@ -132,7 +132,7 @@ app.get("/campgrounds/:id", (req, res) => {
 //4 il campground ottenuto lo invio come variabile al template che renderizzo
 //5 isLoggedIn controlla se sei autenticato
 	//se lo sei ti indirizza al form di aggiunta commenti
-	//se non lo fai ti re-indizzia a login -nella definizione si isloggedin -
+	//se non lo fai ti re-indizzia a login -nella definizione si isloggedin 
 app.get("/campgrounds/:id/comments/new",isLoggedIn, (req, res) => { //1
 	Campground.findById(req.params.id, (err, campground) => {
 		if(err) {
