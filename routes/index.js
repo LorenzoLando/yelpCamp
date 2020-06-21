@@ -25,7 +25,7 @@ router.get("/register", (req, res) => {
 //1 creo un nuovo user inserendo nel database lo username inserito nel form
 //2 creo una registrazione salvando nel database una password che viene criptata
 //3 in caso di errore renderizzo la pagina di registrazione
-//4 ti loggo e ti riporto su campground
+//4 log e ti riporto su campground passport.autenticate take care of all the process
 router.post("/register", (req, res) => {
 	var newUser = new User({username: req.body.username}); //1
 	User.register(newUser, req.body.password, (err, user) => { //2

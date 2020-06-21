@@ -13,7 +13,7 @@ const express = require("express"),
 	  seedDB = 	require("./seeds");	
 
 
-
+//importo le varie route dalla cartella routes
 const commentRoutes = require("./routes/comments"),
 	  campgroundRoutes =  require("./routes/campgrounds"),
 	  indexRoutes = require("./routes/index");
@@ -30,7 +30,7 @@ app.use(express.static(__dirname + "/public"));
 //setto l`utilizzo del bodyparser pacchetto che permette di la request.body in un oggetto js
 app.use(bodyParser.urlencoded({ extended: true })); 
 
-seedDB();
+//seedDB();
 
 
 //PASSPORT CONFIGURATION
@@ -59,7 +59,7 @@ app.use(function(req, res, next) {
 //end of passport configuration
 
 //rendo possibile utilizzare per app le routes definite in altri files
-//1 campgroud e un path comune a tutte le routes campground lo inserisco quando richiedo campground
+//1 /campgrands is defines in app.use because is common to all the routes in that folder, just to dry up the code
 app.use(indexRoutes);
 app.use("/campgrounds", campgroundRoutes); //1
 app.use("/campgrounds/:id/comments", commentRoutes);

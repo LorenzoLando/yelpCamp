@@ -1,5 +1,5 @@
 //richiedo esprss e il metodo router cosi posso routering with router anziche app
-//1 mergeParams : true permette di mescolare i parametri tra campground e comment, in questa maniera posso accede gli id
+//1 mergeParams : true percmette alla child route /new di accedere ai parametri passati nella parent route definita in app.js app.use("/campgrounds/:id/comments", commentRoutes);
 const express = require("express"),
 	  router = express.Router({mergeParams : true});
 const Campground = require("../models/campground");

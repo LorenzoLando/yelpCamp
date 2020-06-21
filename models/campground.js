@@ -1,9 +1,9 @@
 //importo mongoose per farlo funzionare nel modulo
 const mongoose = require("mongoose"); //mongoose to add js to databases
 
-
 //schema setup
 //1 riferimento all`id del commento con l`id del commento che voglio attribuire al record.
+//e`lòggetto di configurazione per una proprieta`individuale
 const campgroundSchema = new mongoose.Schema({
 	name:String,
 	image:String,
