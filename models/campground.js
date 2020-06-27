@@ -2,12 +2,19 @@
 const mongoose = require("mongoose"); //mongoose to add js to databases
 
 //schema setup
-//1 riferimento all`id del commento con l`id del commento che voglio attribuire al record.
+//1 syntax for data association by reference to associate a campground with its related comments
 //e`lòggetto di configurazione per una proprieta`individuale
 const campgroundSchema = new mongoose.Schema({
 	name:String,
 	image:String,
 	description: String,
+	author:{
+		id: {
+			type: mongoose.Schema.Types.ObjectId,
+			ref: "User"
+		},
+		username: String
+	},
 	comments: [
       {
          type: mongoose.Schema.Types.ObjectId, //1

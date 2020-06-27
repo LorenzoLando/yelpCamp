@@ -25,12 +25,16 @@ const express = require("express"),
 //2 ci sono due /campground, lo manda in quello corretto perche` get ha la priorita`
 //2 dopo la post request re-indirizzo nella pagina campground	
 
-	router.post("/", (req, res) => {
+	router.post("/", isLoggedIn,(req, res) => {
 		
   		var name = req.body.name;
    		var image = req.body.image;
 		var description = req.body.description;
-		var newCampground = {name: name, image: image, description: description};
+		var author = {
+			id: req.user._id,
+			username: req.user.username
+		}
+		var newCampground = {name: name, image: image, description: description, author: author};
 				Campground.create(newCampground, (err, added) => { //1.2
 					if(err) {
 						console.log(err)
@@ -42,7 +46,7 @@ const express = require("express"),
 	});
 
 //NEW -  RESTFUL ROUTING STRUCTURE mostra la form attraverso la quale possimao creare un nuovo item
-	router.get("/new", (req, res) => {
+	router.get("/new",isLoggedIn, (req, res) => {
 	  res.render("campgrounds/new");
 	});
 
@@ -63,6 +67,18 @@ const express = require("express"),
 		});
 
 	}); 
+
+//definisco il middlware per quanto riguarda l`autenticazione
+//la funzione verra` utilizzata come middleware 
+//1 se sei autenticato con una funzionalita` offerta da passport
+//2 eseguo la funzione successiva grazie a next()
+//3 if non autenticato reindirizzo su /login
+function isLoggedIn (req, res, next) {
+	if(req.isAuthenticated()) { //1
+	   		return next(); //2
+	 }
+	 res.redirect("/login"); //3
+}
 
 
 module.exports = router;

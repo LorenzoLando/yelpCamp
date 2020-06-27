@@ -36,8 +36,9 @@ router.get("/new",isLoggedIn, (req, res) => { //1
 //3 se non e` errore creo un commento con i parametri passati dal form che si trovano nell`oggetto comment perche comment[text]
 //4 pusho il commento nel campground che ho trovato
 //5 rendirizzo alla pagina del campgrounde relativo
-router.post("/campgrounds/:id/comments", (req, res) => {
-	
+//6 add author id and name to  the comment record, saving the comment record
+router.post("/", (req, res) => {
+	console.log('primo step');
 	Campground.findById(req.params.id, (err, campground) => { //1
 	 	if(err) {
 			console.log(err);
@@ -48,6 +49,9 @@ router.post("/campgrounds/:id/comments", (req, res) => {
 				   console.log(err);
 				} else {
 					
+					comment.author.id = req.user._id;//6
+					comment.author.username = req.user.username;//6
+					comment.save(); //6
 					campground.comments.push(comment); //4
 					campground.save();
 					res.redirect(`/campgrounds/${campground._id}`); //5

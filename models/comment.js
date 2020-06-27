@@ -3,11 +3,12 @@ const mongoose = require("mongoose"); //mongoose to add js to databases
 
 
 //schema setup 
+//1 data association by reference to associate a comment with its user, the 
 const commentSchema = new mongoose.Schema({
 	text:String,
 	author:{
 		id: {
-			type: mongoose.Schema.Types.ObjectId,
+			type: mongoose.Schema.Types.ObjectId,//1
 			ref: "User"
 		},
 		username: String
